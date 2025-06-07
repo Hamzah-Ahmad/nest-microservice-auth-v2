@@ -2,19 +2,27 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigService } from '@nestjs/config';
+import { AUTH_SERVICE } from '@app/common/constants';
 
 @Module({
   imports: [
-    ClientsModule.register([
-      AuthModule,
+    AuthModule,
 
+    ClientsModule.registerAsync([
       {
-        name: 'AUTH-SERVICE',
-        transport: Transport.TCP,
-        options: {
-          host: '0.0.0.0',
-          port: 3001,
+        name: AUTH_SERVICE,
+        useFactory: (configService: ConfigService) => {
+          return {
+            transport: Transport.TCP,
+            options: {
+              host: configService.getOrThrow<string>('AUTH_SERVICE_HOST'),
+              port: configService.getOrThrow<number>('AUTH_SERVICE_PORT'),
+            },
+          };
         },
+        inject: [ConfigService],
+        // imports: [ConfigModule] // We would need to do this if isGlobal was not set to true in ConfigModule.forRoot
       },
     ]),
   ],

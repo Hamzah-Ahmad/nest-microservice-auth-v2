@@ -1,10 +1,11 @@
+import { AUTH_PATTERNS, AUTH_SERVICE } from '@app/common/constants';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 @Injectable()
 export class AuthService {
-  constructor(@Inject('AUTH-SERVICE') private authClient: ClientProxy) {}
+  constructor(@Inject(AUTH_SERVICE) private authClient: ClientProxy) {}
 
   async register(): Promise<any> {
-    return this.authClient.send('auth.register', { a: 'test' });
+    return this.authClient.send(AUTH_PATTERNS.REGISTER, { a: 'test' });
   }
 }

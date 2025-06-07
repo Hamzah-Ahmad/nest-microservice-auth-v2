@@ -6,6 +6,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Post('login')
   async login(): Promise<string> {
-    return  `this.authService.login() `;
+    return  this.authService.register() ;
   }
 }
