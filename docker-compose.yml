@@ -1,0 +1,51 @@
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./apps/api-gateway/Dockerfile
+    volumes:
+      - .:/usr/src/app 	# Mount your full codebase into the container for live development.
+      - /usr/src/app/node_modules # Prevent host node_modules from overwriting the container’s clean install.
+    ports:
+      - "4000:4000"
+    command: "npm run start:dev api-gateway"
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+    volumes:
+      - .:/usr/src/app 	        # Volumes in both all services mean: 
+      - /usr/src/app/node_modules # “use these volumes in each service isolated container”
+    ports:
+      - "4001:4001"
+    command: "npm run start:dev auth"
+  user:
+    build:
+      context: .
+      dockerfile: ./apps/user/Dockerfile
+    env_file:
+      - ./apps/user/.env
+    volumes:
+      - .:/usr/src/app 	        # Volumes in both all services mean: 
+      - /usr/src/app/node_modules # “use these volumes in each service isolated container”
+    ports:
+      - "4002:4002"
+    command: "npm run start:dev user"
+
+  user_db_service:
+    image: postgres:14
+    env_file:
+      - ./envs/db_user.env
+    ports:
+      - "5433:5432"   # Host port 5432 → Container port 5432 (can use 5432 instead BUT causing clash with local postgres)
+    volumes:
+      - user_db_data:/var/lib/postgresql/data # Use a named storage area called user_db_data (created by the volume line below the services), and stick it into the place inside the container where Postgres saves its data.”
+
+# Having volumes at the bottom isn't completely necessary, but can help:
+# Docker will still create the volume automatically, but:
+# 1. It will work just fine.
+# 2. But you won’t have control over its configuration (like driver or options).
+# 3. It might be confusing for future maintainers.
+
+volumes:
+  user_db_data:

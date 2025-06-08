@@ -1,3 +1,7 @@
 export const AUTH_PATTERNS = {
-    REGISTER: 'auth.register'
-}
+  LOGIN: 'auth.login',
+};
+
+export const USER_PATTERNS = {
+  GET: 'user.get',
+};

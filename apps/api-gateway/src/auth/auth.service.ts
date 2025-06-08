@@ -5,7 +5,7 @@ import { ClientProxy } from '@nestjs/microservices';
 export class AuthService {
   constructor(@Inject(AUTH_SERVICE) private authClient: ClientProxy) {}
 
-  async register(): Promise<any> {
-    return this.authClient.send(AUTH_PATTERNS.REGISTER, { a: 'test' });
+  async login(): Promise<any> {
+    return this.authClient.send(AUTH_PATTERNS.LOGIN, {});
   }
 }
