@@ -7,7 +7,7 @@ services:
       - .:/usr/src/app 	# Mount your full codebase into the container for live development.
       - /usr/src/app/node_modules # Prevent host node_modules from overwriting the container’s clean install.
     ports:
-      - "4000:4000"
+      - "3000:3000"
     command: "npm run start:dev api-gateway"
   auth:
     build:
@@ -17,7 +17,7 @@ services:
       - .:/usr/src/app 	        # Volumes in both all services mean: 
       - /usr/src/app/node_modules # “use these volumes in each service isolated container”
     ports:
-      - "4001:4001"
+      - "3001:3001"
     command: "npm run start:dev auth"
   user:
     build:
@@ -29,17 +29,17 @@ services:
       - .:/usr/src/app 	        # Volumes in both all services mean: 
       - /usr/src/app/node_modules # “use these volumes in each service isolated container”
     ports:
-      - "4002:4002"
+      - "3002:3002"
     command: "npm run start:dev user"
 
   user_db_service:
     image: postgres:14
     env_file:
-      - ./envs/db_user.env
+      - ./envs/user_db.env
     ports:
       - "5433:5432"   # Host port 5432 → Container port 5432 (can use 5432 instead BUT causing clash with local postgres)
     volumes:
-      - user_db_data:/var/lib/postgresql/data # Use a named storage area called user_db_data (created by the volume line below the services), and stick it into the place inside the container where Postgres saves its data.”
+      - user_database:/var/lib/postgresql/data # Use a named storage area called user_db_data (created by the volume line below the services), and stick it into the place inside the container where Postgres saves its data.”
 
 # Having volumes at the bottom isn't completely necessary, but can help:
 # Docker will still create the volume automatically, but:
@@ -48,4 +48,4 @@ services:
 # 3. It might be confusing for future maintainers.
 
 volumes:
-  user_db_data:
+  user_database:
