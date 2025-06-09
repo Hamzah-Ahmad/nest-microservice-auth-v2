@@ -9,7 +9,7 @@ import { ClientProxy } from '@nestjs/microservices';
 export class AuthService {
   constructor(@Inject(AUTH_SERVICE) private authClient: ClientProxy) {}
 
-  // async login(): Promise<any> {
-  //   return this.authClient.send(USER_PATTERNS.GET, { id: 200 });
-  // }
+  async login(): Promise<any> {
+    return this.authClient.send(AUTH_PATTERNS.LOGIN, { id: 200 });
+  }
 }

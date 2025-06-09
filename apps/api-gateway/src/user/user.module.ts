@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { USER_SERVICE } from '@app/common/constants';
+import { UserController } from './user.controller';
+import { UserService } from './user.service';
 
 
 @Module({
@@ -13,7 +15,7 @@ import { USER_SERVICE } from '@app/common/constants';
           return {
             transport: Transport.TCP,
             options: {
-              host: configService.getOrThrow<string>('USER_SERVICE_HOST'),
+              host: configService.getOrThrow<string>('USER_SERVICE_HOST'), // NOTE: make sure to use the service name in the docker compose file as the host name. So if the service name is user, hostname should be user as well
               port: configService.getOrThrow<number>('USER_SERVICE_PORT'),
             },
           };
@@ -23,7 +25,7 @@ import { USER_SERVICE } from '@app/common/constants';
       },
     ]),
   ],
-  controllers: [],
-  providers: [],
+  controllers: [UserController],
+  providers: [UserService],
 })
 export class UserModule {}

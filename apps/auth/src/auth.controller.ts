@@ -8,8 +8,8 @@ import { firstValueFrom } from 'rxjs';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // @MessagePattern(AUTH_PATTERNS.LOGIN)
-  // async login(@Payload() payload: any) {
-  //   return await this.authService.login();
-  // }
+  @MessagePattern(AUTH_PATTERNS.LOGIN)
+  async login(@Payload() payload: any) {
+    return `TODO: Create service`
+  }
 }
