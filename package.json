@@ -22,7 +22,7 @@
     "typeorm:create-migration-user": "npm run typeorm -- migration:create ./apps/user/migrations/$npm_config_name",
     "typeorm:generate-migration-user": "npm run typeorm -- migration:generate ./apps/user/migrations/$npm_config_name -d ./apps/user/typeOrm.config.ts",
     "typeorm:run-migrations-user": "npm run typeorm migration:run -- -d ./apps/user/typeOrm.config.ts",
-    "typeorm:revert-migrations-user": "npm run typeorm migration:run -- -d ./apps/user/typeOrm.config.ts"
+    "typeorm:revert-migrations-user": "npm run typeorm migration:revert -- -d ./apps/user/typeOrm.config.ts"
     
 
   },
