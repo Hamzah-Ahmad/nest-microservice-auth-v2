@@ -4,18 +4,18 @@ services:
       context: .
       dockerfile: ./apps/api-gateway/Dockerfile
     volumes:
-      - .:/usr/src/app 	# Mount your full codebase into the container for live development.
-      - /usr/src/app/node_modules # Prevent host node_modules from overwriting the container’s clean install.
+      - .:/usr/src/app # Hot reload not working for windows	
+      - /usr/src/app/node_modules
     ports:
       - "3000:3000"
-    command: "npm run start:dev api-gateway"
+    command: "npm run start:dev"
   auth:
     build:
       context: .
       dockerfile: ./apps/auth/Dockerfile
     volumes:
-      - .:/usr/src/app 	        # "Sync my local code with the container so I can live-edit it (wont work for monorepo)" 
-      - /usr/src/app/node_modules # "But let the container keep its own node_modules so it doesn’t get messed up by my local system"
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
       - "3001:3001"
     command: "npm run start:dev auth"
@@ -26,8 +26,8 @@ services:
     env_file:
       - ./apps/user/.env
     volumes:
-      - .:/usr/src/app 	        # "Sync my local code with the container so I can live-edit it (wont work for monorepo)" 
-      - /usr/src/app/node_modules # "But let the container keep its own node_modules so it doesn’t get messed up by my local system"
+      - .:/usr/src/app 	       
+      - /usr/src/app/node_modules 
     ports:
       - "3002:3002"
     command: "npm run start:dev user"
@@ -37,15 +37,9 @@ services:
     env_file:
       - ./envs/user_db.env
     ports:
-      - "5433:5432"   # Host port 5432 → Container port 5432 (can use 5432 instead BUT causing clash with local postgres)
+      - "5433:5432"
     volumes:
-      - user_database:/var/lib/postgresql/data # Use a named storage area called user_db_data (created by the volume line below the services), and stick it into the place inside the container where Postgres saves its data.”
-
-# Having volumes at the bottom isn't completely necessary, but can help:
-# Docker will still create the volume automatically, but:
-# 1. It will work just fine.
-# 2. But you won’t have control over its configuration (like driver or options).
-# 3. It might be confusing for future maintainers.
+      - user_database:/var/lib/postgresql/data
 
 volumes:
   user_database:
@@ -89,3 +83,99 @@ volumes:
 # Username/Password: Whatever's in your ./envs/user_db.env
 
 # After connecting, you'll see both the postgres database and your application database listed under the server in pgAdmin's tree view.
+
+
+
+# NOTE: DockerFile with comments below for reference
+
+# services:
+#   api-gateway:
+#     build:
+#       context: .
+#       dockerfile: ./apps/api-gateway/Dockerfile
+#     volumes:
+#       - .:/usr/src/app 	# Mount your full codebase into the container for live development.
+#       # - /usr/src/app/node_modules # Prevent host node_modules from overwriting the container’s clean install.
+#     ports:
+#       - "3000:3000"
+#     command: "npm run start:dev api-gateway"
+#   # auth:
+#   #   build:
+#   #     context: .
+#   #     dockerfile: ./apps/auth/Dockerfile
+#   #   volumes:
+#   #     - .:/usr/src/app 	        # "Sync my local code with the container so I can live-edit it (Not working for Windows out-of-the-box)
+#   #     - /usr/src/app/node_modules # "But let the container keep its own node_modules so it doesn’t get messed up by my local system"
+#   #   ports:
+#   #     - "3001:3001"
+#   #   command: "npm run start:dev auth"
+#   # user:
+#   #   build:
+#   #     context: .
+#   #     dockerfile: ./apps/user/Dockerfile
+#   #   env_file:
+#   #     - ./apps/user/.env
+#   #   volumes:
+#   #     - .:/usr/src/app 	        # "Sync my local code with the container so I can live-edit it (Not working for Windows out-of-the-box)" 
+#   #     - /usr/src/app/node_modules # "But let the container keep its own node_modules so it doesn’t get messed up by my local system"
+#   #   ports:
+#   #     - "3002:3002"
+#   #   command: "npm run start:dev user"
+
+#   # user_db_service:
+#   #   image: postgres:14
+#   #   env_file:
+#   #     - ./envs/user_db.env
+#   #   ports:
+#   #     - "5433:5432"   # Host port 5432 → Container port 5432 (can use 5432 instead BUT causing clash with local postgres)
+#   #   volumes:
+#   #     - user_database:/var/lib/postgresql/data # Use a named storage area called user_db_data (created by the volume line below the services), and stick it into the place inside the container where Postgres saves its data.”
+
+# # Having volumes at the bottom isn't completely necessary, but can help:
+# # Docker will still create the volume automatically, but:
+# # 1. It will work just fine.
+# # 2. But you won’t have control over its configuration (like driver or options).
+# # 3. It might be confusing for future maintainers.
+
+# volumes:
+#   user_database:
+
+
+# # Note: Steps to connect to DB using PG Admin
+# # In the left panel (Object Explorer), look for "Servers"
+# # Right-click directly on the word "Servers" (not in empty space)
+# # You should see "Register" → "Server..." option
+
+# # General tab:
+# # Name: Docker User DB (or any name you prefer)
+# # Connection tab:
+# # Host name/address: localhost
+# # Port: 5433
+# # Maintenance database: postgres (default) (more data below)
+# # Username: (from your ./envs/user_db.env)
+# # Password: (from your ./envs/user_db.env)
+
+
+# # What is a maintenance database?
+# # The maintenance database is the database that pgAdmin (or any PostgreSQL client) connects to initially to establish the connection to the PostgreSQL server. It's used for administrative operations and to list all the other databases on that server.
+# # Should you use your app's database name?
+# # You have two options:
+
+# # Use postgres (recommended): This is the default administrative database that exists on every PostgreSQL installation. It's specifically designed for this purpose.
+# # Use your app's database name: This works too, but only if that database already exists.
+
+# # Why postgres is usually better:
+
+# # It always exists by default
+# # It's designed for administrative/maintenance tasks
+# # Your application database might not exist yet when you first connect
+# # It's cleaner separation - you connect via the admin database, then browse to your app database
+
+# # What happens after connection:
+# # Once pgAdmin connects using the maintenance database, you'll see ALL databases on that PostgreSQL server in the left panel, including your application database. You can then browse tables, run queries, etc. on any of them.
+# # So for your setup:
+
+# # Maintenance database: postgres
+# # Username/Password: Whatever's in your ./envs/user_db.env
+
+# # After connecting, you'll see both the postgres database and your application database listed under the server in pgAdmin's tree view.
