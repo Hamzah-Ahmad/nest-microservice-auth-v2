@@ -14,8 +14,8 @@ services:
       context: .
       dockerfile: ./apps/auth/Dockerfile
     volumes:
-      - .:/usr/src/app 	        # Volumes in both all services mean: 
-      - /usr/src/app/node_modules # “use these volumes in each service isolated container”
+      - .:/usr/src/app 	        # "Sync my local code with the container so I can live-edit it (wont work for monorepo)" 
+      - /usr/src/app/node_modules # "But let the container keep its own node_modules so it doesn’t get messed up by my local system"
     ports:
       - "3001:3001"
     command: "npm run start:dev auth"
@@ -26,8 +26,8 @@ services:
     env_file:
       - ./apps/user/.env
     volumes:
-      - .:/usr/src/app 	        # Volumes in both all services mean: 
-      - /usr/src/app/node_modules # “use these volumes in each service isolated container”
+      - .:/usr/src/app 	        # "Sync my local code with the container so I can live-edit it (wont work for monorepo)" 
+      - /usr/src/app/node_modules # "But let the container keep its own node_modules so it doesn’t get messed up by my local system"
     ports:
       - "3002:3002"
     command: "npm run start:dev user"
