@@ -7,8 +7,6 @@ config({ path: path.resolve(__dirname, '.env') }); // Note about why path was ne
 
 const configService = new ConfigService();
 
-console.log('LOGGER - ', configService.getOrThrow('PG_PORT'));
-
 export default new DataSource({
   type: 'postgres',
   host: configService.getOrThrow('PG_HOST'),

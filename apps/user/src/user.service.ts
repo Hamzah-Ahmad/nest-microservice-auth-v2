@@ -1,7 +1,6 @@
 import {
   ConflictException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +9,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from '@app/common/dtos/user/CreateUser.dto';
 import { instanceToPlain } from 'class-transformer';
 import { VerifyUserDto } from '@app/common/dtos/user/VerifyUser.dto';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class UserService {
@@ -28,10 +28,13 @@ export class UserService {
     });
 
     if (existingUser) {
-      throw new ConflictException('Username already taken');
+      throw new RpcException('Username already taken'); // Note, the microservice needs to thro RpcException so that calling service can correctly receive it. Otherwise calling service will just get a generic message and error
     }
 
-    const newUser = this.userRepository.create(body);
+    const newUser = this.userRepository.create({
+      ...body,
+      password: await bcrypt.hash(body.password, 10)
+    });
     const user = await this.userRepository.save(newUser);
     // return user;
     return instanceToPlain(user); // NOTE: Quick method to hide  fields that use Exclude
@@ -39,11 +42,13 @@ export class UserService {
 
   async verifyUser({ username, password }: VerifyUserDto) {
     const user = await this.userRepository.findOneBy({ username });
-    if (!user) throw new UnauthorizedException('Credentials are not valid');
+    if (!user) {
+      throw new RpcException('Credentials are not valid');
+    }
 
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid) {
-      throw new UnauthorizedException('Credentials are not valid');
+      throw new RpcException('Credentials are not valid');
     }
 
     return instanceToPlain(user);

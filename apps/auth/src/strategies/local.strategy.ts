@@ -26,7 +26,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         }),
       );
 
-      console.log('LOGGER [local.strategy.ts] - response: ', response);
+      return response;
+
     } catch (err) {
       // The alidateUser in userService makes use of AbstractCrudService to find the existing user.
       throw new UnauthorizedException(err);

@@ -9,7 +9,6 @@ export class UserController {
   @Post('/')
   createUser(@Body() body: CreateUserDto) {
     const response = this.userService.createUser(body);
-    console.log('LOGGER [user.controller] - response: ', response);
     return response;
   }
 }

@@ -37,7 +37,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       this.userClient.send<any, GetUserDto>(USER_PATTERNS.GET, { id: userId }),
     );
 
-    console.log('LOGGER - [jwt-strategy] - response: ', response);
     return response;
   }
 }
