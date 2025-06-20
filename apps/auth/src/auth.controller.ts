@@ -1,11 +1,12 @@
-import { Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUser } from '@app/common/decorators';
-import { UserDto } from '@app/common/dtos/user';
+import { CreateUserDto, UserDto } from '@app/common/dtos/user';
 import { Response } from 'express';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { AUTH_PATTERNS } from '@app/common/constants';
 
 @Controller('auth')
 export class AuthController {
@@ -21,10 +22,19 @@ export class AuthController {
     response.send(user);
   }
 
+  @Post('register')
+  async register(
+    @Body() body: CreateUserDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+  const user = await this.authService.register(body, response);
+  response.send(user);
+  }
+
   // Using guard here will ensure that the JWT received in the request will be checked verified.
   // The JWTAuthGuard will add the user property to the Payload, similar to how it adds to the request object
   @UseGuards(JwtAuthGuard)
-  @MessagePattern('auth.authenticate')
+  @MessagePattern(AUTH_PATTERNS.AUTHENTICATE)
   async authenticate(@Payload() data: any) {
     return data.user;
   }

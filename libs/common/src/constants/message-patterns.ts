@@ -1,5 +1,5 @@
 export const AUTH_PATTERNS = {
-  LOGIN: 'auth.login',
+  AUTHENTICATE: 'auth.authenticate'
 };
 
 export const USER_PATTERNS = {
