@@ -56,6 +56,10 @@ export class AuthService {
       throw new InternalServerErrorException('User creation failed');
     }
   }
+
+  async logout(response: Response) {
+    response.clearCookie('Authentication');
+  }
 }
 
 // constructor(@Inject(USER_SERVICE) private userClient: ClientProxy) {}

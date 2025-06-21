@@ -27,8 +27,15 @@ export class AuthController {
     @Body() body: CreateUserDto,
     @Res({ passthrough: true }) response: Response,
   ) {
-  const user = await this.authService.register(body, response);
-  response.send(user);
+    const user = await this.authService.register(body, response);
+    response.send(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) response: Response) {
+    await this.authService.logout(response);
+    response.status(200).send({ message: 'Logged out successfully' });
   }
 
   // Using guard here will ensure that the JWT received in the request will be checked verified.
