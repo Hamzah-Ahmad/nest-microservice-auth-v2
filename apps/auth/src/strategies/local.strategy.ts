@@ -3,8 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { USER_PATTERNS, USER_SERVICE } from '@app/common/constants';
 import { ClientProxy } from '@nestjs/microservices';
-import { VerifyUserDto } from '@app/common/dtos/user/VerifyUser.dto';
-import { UserDto } from '@app/common/dtos/user';
+import { UserDto, VerifyUserDto } from '@app/common/dtos/user';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()

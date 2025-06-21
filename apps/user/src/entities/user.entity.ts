@@ -1,11 +1,8 @@
+import { Role } from '@app/common/enums';
 import { Exclude } from 'class-transformer';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-export enum Role {
-  User = 'user',
-  Moderator = 'moderator',
-  Admin = 'admin',
-}
+
 
 @Entity()
 export class User {

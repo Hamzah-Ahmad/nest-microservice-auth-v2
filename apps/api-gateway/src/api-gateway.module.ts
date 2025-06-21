@@ -5,7 +5,7 @@ import { ApiGatewayController } from './api-gateway.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AUTH_SERVICE } from '@app/common/constants';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from '@app/common/guards';
+import { JwtAuthGuard, RolesGuard } from '@app/common/guards';
 
 @Module({
   imports: [
@@ -37,6 +37,10 @@ import { JwtAuthGuard } from '@app/common/guards';
       // NOTE: makes all api-gateway routes protected. Not doing the same in auth routes because there are only three routes and only two use guards (and that too different guards)
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })

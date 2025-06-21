@@ -3,11 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { TokenPayload } from '@app/common/interfaces/token-payload.interface';
 import { USER_PATTERNS, USER_SERVICE } from '@app/common/constants';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { GetUserDto } from '@app/common/dtos/user';
+import { TokenPayload } from '@app/common/interfaces';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

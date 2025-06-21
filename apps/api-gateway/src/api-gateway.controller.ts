@@ -1,14 +1,25 @@
-import { Public } from '@app/common/decorators/is-public.decorator';
-import { JwtAuthGuard } from '@app/common/guards';
+import { Public, Roles } from '@app/common/decorators';
+import { Role } from '@app/common/enums';
 import { Controller, Get, UseGuards } from '@nestjs/common';
 
 @Controller()
 export class ApiGatewayController {
-
-  @Public()  
+  @Public()
   @Get('/')
   async getHealth() {
     return `API gateway running`;
+  }
+
+  @Get('/adminOnly')
+  @Roles(Role.Admin)
+  getAdminOnly(): string {
+    return `Admin route`;
+  }
+
+  @Get('/admin_user')
+  @Roles(Role.Admin, Role.User)
+  getAdminAndUser(): string {
+    return `Admin & User route`;
   }
 
   // Note: Only for testing purposes. Remove

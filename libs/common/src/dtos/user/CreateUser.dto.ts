@@ -34,7 +34,7 @@
 //   role: Role;
 // }
 
-import { Role } from 'apps/user/src/entities/user.entity';
+import { Role } from '@app/common/enums';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
